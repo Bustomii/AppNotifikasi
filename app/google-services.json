@@ -1,0 +1,44 @@
+{
+  "project_info": {
+    "project_number": "8157494241",
+    "firebase_url": "https://appnotifikasi-a1e4a.firebaseio.com",
+    "project_id": "appnotifikasi-a1e4a",
+    "storage_bucket": "appnotifikasi-a1e4a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:8157494241:android:b642f423f11144ac",
+        "android_client_info": {
+          "package_name": "com.bustomi.ilkom.appnotifikasi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "8157494241-elq112uobqjsf68ntfgivg24n58uhpir.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bustomi.ilkom.appnotifikasi",
+            "certificate_hash": "b915b8359849a3e3c7389abf63f775adbbec2987"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGoTDyIm8Znt6kG2Uj1VklcMCe2UDfrQ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "8157494241-9e10c3vfkbuvdla324vci4k4tamngq0d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
