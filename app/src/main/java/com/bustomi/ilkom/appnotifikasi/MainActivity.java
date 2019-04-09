@@ -1,136 +1,65 @@
 package com.bustomi.ilkom.appnotifikasi;
 
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
-import android.support.annotation.NonNull;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String Channel_ID = "pushNotif";
-    private static final String Channel_Name = "pushNotiff";
-    private static final String Channel_Desc = "Simple Push Norif";
+    public static final int notifikasi = 1;
 
-    private EditText editTextEmail, editTextPassowrd;
-    private ProgressBar progressBar;
-    private FirebaseAuth mAuth;
+    Button btnkirim;
+    EditText txtjudul, txtpesan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mAuth = FirebaseAuth.getInstance();
+        btnkirim = (Button) findViewById(R.id.btnkirim);
+        txtjudul = (EditText) findViewById(R.id.txtJudul);
+        txtpesan = (EditText) findViewById(R.id.txtpesan);
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-
-            NotificationChannel channel = new NotificationChannel(Channel_ID, Channel_Name, NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription(Channel_Desc);
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
-        }
-
-        progressBar = findViewById(R.id.prgoressbar);
-        progressBar.setVisibility(View.INVISIBLE);
-        editTextEmail = findViewById(R.id.editTextEmail);
-        editTextPassowrd = findViewById(R.id.editTextPassword);
-
-        findViewById(R.id.buttonSignUp).setOnClickListener(new View.OnClickListener() {
+        btnkirim.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                createUser();
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                tampilNotifikasi(txtjudul.getText().toString()
+                        , txtpesan.getText().toString(), intent);
             }
         });
-
     }
 
-    private void createUser(){
-        final String email = editTextEmail.getText().toString().trim();
-        final String password = editTextPassowrd.getText().toString().trim();
+    private void tampilNotifikasi(String s, String s1, Intent intent) {
+        PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.this
+                , notifikasi, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this);
+        Notification notification;
+        notification = builder.setSmallIcon(R.mipmap.ic_launcher)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .setContentTitle(s)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(MainActivity.this.getResources()
+                        , R.mipmap.ic_launcher))
+                .setContentText(s1)
+                .build();
 
-        if (email.isEmpty()){
-            editTextEmail.setError("Email Required");
-            editTextEmail.requestFocus();
-            return;
-        }
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
-        if (password.length()<6){
-            editTextPassowrd.setError("Password should at least 6 long");
-            editTextPassowrd.requestFocus();
-            return;
-        }
-
-        progressBar.setVisibility(View.VISIBLE);
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-
-                        if (task.isSuccessful()){
-                            startProfileActivity();
-                        } else {
-
-                            if(task.getException() instanceof FirebaseAuthUserCollisionException){
-                                userLogin(email, password);
-
-                            } else {
-                                progressBar.setVisibility(View.VISIBLE);
-                                Toast.makeText(MainActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                        }
-
-                    }
-                });
-
+        NotificationManager notificationManager = (NotificationManager) MainActivity.this
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(notifikasi, notification);
     }
-
-    private void userLogin(String email, String password){
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            startProfileActivity();
-                        } else {
-                            progressBar.setVisibility(View.INVISIBLE);
-                            Toast.makeText(MainActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if(mAuth.getCurrentUser() == null) {
-            startProfileActivity();
-        }
-    }
-
-    private void startProfileActivity(){
-        Intent intent = new Intent(this, MainActivity2.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-    }
-
 }
+
+
